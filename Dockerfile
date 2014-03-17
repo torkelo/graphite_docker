@@ -1,4 +1,4 @@
-from	ubuntu:12.04
+from	ubuntu
 run	echo 'deb http://us.archive.ubuntu.com/ubuntu/ precise universe' >> /etc/apt/sources.list
 run	apt-get -y update
 
@@ -51,20 +51,18 @@ run	chmod 0775 /var/lib/graphite/storage /var/lib/graphite/storage/whisper
 run	chmod 0664 /var/lib/graphite/storage/graphite.db
 run	cd /var/lib/graphite/webapp/graphite && python manage.py syncdb --noinput
 
-# graphana
+# grafana
 run     mkdir /src/grafana && cd /src/grafana &&\
-	wget https://github.com/torkelo/grafana/releases/download/v1.4.0/grafana-1.4.0.tar.gz &&\
-	tar -xzvf grafana-1.4.0.tar.gz && rm grafana-1.4.0.tar.gz
+	wget https://github.com/torkelo/grafana/releases/download/v1.5.1/grafana-1.5.1.tar.gz &&\
+	tar xzvf grafana-1.5.1.tar.gz && rm grafana-1.5.1.tar.gz
 
 add     ./grafana/config.js /src/grafana/config.js
 
-# proxy
-add     ./google_auth_proxy/google_auth_proxy /usr/local/bin/google_auth_proxy
+# fake data generator
+add ./fake-data-gen /src/fake-data-gen
 
 # elasticsearch
 add	./elasticsearch/run /usr/local/bin/run_elasticsearch
-
-
 
 # Add system service config
 add	./nginx/nginx.conf /etc/nginx/nginx.conf
@@ -72,21 +70,25 @@ add	./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Nginx
 #
 # graphite
-expose	85:80
+expose	80
 # grafana
-expose  86:81
+expose  81
 
 # Carbon line receiver port
-expose	2003:2003
+expose	2003
 # Carbon pickle receiver port
-expose	2004:2004
+expose	2004
 # Carbon cache query port
-expose	7002:7002
+expose	7002
 
 # Statsd UDP port
-expose	8125:8125/udp
+expose	8125/udp
 # Statsd Management port
-expose	8126:8126
+expose	8126
+
+VOLUME ["/var/lib/elasticsearch"]
+VOLUME ["/var/lib/graphite/storage/whisper"]
+VOLUME ["/var/lib/log/supervisor"]
 
 cmd	["/usr/bin/supervisord"]
 
