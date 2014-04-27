@@ -38,7 +38,7 @@ function (Settings) {
      * If your graphite server has another timezone than you & users browsers specify the offset here
      * Example: "-0500" (for UTC - 5 hours)
      */
-    timezoneOffset: null,
+    timezoneOffset: "0000",
 
     grafana_index: "grafana-dash",
 
