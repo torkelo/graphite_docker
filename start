@@ -5,7 +5,7 @@ docker rm gfdev
 
 docker run -d \
 	-v /var/docker/gfdev/elastic:/var/lib/elasticsearch \
-	-v /var/docker/gfdev/graphite:/var/lib/graphite/storage/whisper \
+	-v /var/docker/gfdev/graphite:/opt/graphite/storage/whisper \
 	-v /var/docker/gfdev/supervisor:/var/log/supervisor \
 	-p 8080:80 \
   -p 8081:81 \

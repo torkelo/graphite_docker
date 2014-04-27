@@ -1,6 +1,9 @@
-from	ubuntu
+from	ubuntu:14.04
+
 run	echo 'deb http://us.archive.ubuntu.com/ubuntu/ precise universe' >> /etc/apt/sources.list
 run	apt-get -y update
+
+run apt-get -y install software-properties-common
 
 run	apt-get -y install python-software-properties &&\
 	add-apt-repository ppa:chris-lea/node.js &&\
@@ -32,31 +35,39 @@ run    apt-get -y install openjdk-7-jre
 run	mkdir /src && git clone https://github.com/etsy/statsd.git /src/statsd
 
 # Install required packages
-run	pip install whisper
-run	pip install --install-option="--prefix=/var/lib/graphite" --install-option="--install-lib=/var/lib/graphite/lib" carbon
-run	pip install --install-option="--prefix=/var/lib/graphite" --install-option="--install-lib=/var/lib/graphite/webapp" graphite-web
+#run	pip install whisper
+#run	pip install --install-option="--prefix=/var/lib/graphite" --install-option="--install-lib=/var/lib/graphite/lib" carbon
+#run	pip install --install-option="--prefix=/var/lib/graphite" --install-option="--install-lib=/var/lib/graphite/webapp" graphite-web
+
+run cd /usr/local/src && git clone https://github.com/graphite-project/graphite-web.git
+run cd /usr/local/src && git clone https://github.com/graphite-project/carbon.git
+run cd /usr/local/src && git clone https://github.com/graphite-project/whisper.git
+
+run cd /usr/local/src/whisper && git checkout master && python setup.py install
+run cd /usr/local/src/carbon && git checkout 0.9.x && python setup.py install
+run cd /usr/local/src/graphite-web && git checkout 0.9.x && python check-dependencies.py; python setup.py install
 
 # statsd
 add	./statsd/config.js /src/statsd/config.js
 
 # Add graphite config
-add	./graphite/initial_data.json /var/lib/graphite/webapp/graphite/initial_data.json
-add	./graphite/local_settings.py /var/lib/graphite/webapp/graphite/local_settings.py
-add	./graphite/carbon.conf /var/lib/graphite/conf/carbon.conf
-add	./graphite/storage-schemas.conf /var/lib/graphite/conf/storage-schemas.conf
-run	mkdir -p /var/lib/graphite/storage/whisper
-run	touch /var/lib/graphite/storage/graphite.db /var/lib/graphite/storage/index
-run	chown -R www-data /var/lib/graphite/storage
-run	chmod 0775 /var/lib/graphite/storage /var/lib/graphite/storage/whisper
-run	chmod 0664 /var/lib/graphite/storage/graphite.db
-run	cd /var/lib/graphite/webapp/graphite && python manage.py syncdb --noinput
+add	./graphite/initial_data.json /opt/graphite/webapp/graphite/initial_data.json
+add	./graphite/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
+add	./graphite/carbon.conf /opt/graphite/conf/carbon.conf
+add	./graphite/storage-schemas.conf /opt/graphite/conf/storage-schemas.conf
+run	mkdir -p /opt/graphite/storage/whisper
+run	touch /opt/graphite/storage/graphite.db /opt/graphite/storage/index
+run	chown -R www-data /opt/graphite/storage
+run	chmod 0775 /opt/graphite/storage /opt/graphite/storage/whisper
+run	chmod 0664 /opt/graphite/storage/graphite.db
+run	cd /opt/graphite/webapp/graphite && python manage.py syncdb --noinput
 
 # grafana
 run     mkdir /src/grafana && cd /src/grafana &&\
 	wget https://github.com/torkelo/grafana/releases/download/v1.5.1/grafana-1.5.1.tar.gz &&\
 	tar xzvf grafana-1.5.1.tar.gz && rm grafana-1.5.1.tar.gz
 
-add     ./grafana/config.js /src/grafana/config.js
+add ./grafana/config.js /src/grafana/config.js
 
 # fake data generator
 add ./fake-data-gen /src/fake-data-gen
@@ -87,7 +98,7 @@ expose	8125/udp
 expose	8126
 
 VOLUME ["/var/lib/elasticsearch"]
-VOLUME ["/var/lib/graphite/storage/whisper"]
+VOLUME ["/opt/graphite/storage/whisper"]
 VOLUME ["/var/lib/log/supervisor"]
 
 cmd	["/usr/bin/supervisord"]
