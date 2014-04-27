@@ -71,6 +71,7 @@ add ./grafana/config.js /src/grafana/config.js
 
 # fake data generator
 add ./fake-data-gen /src/fake-data-gen
+run cd /src/fake-data-gen && npm install
 
 # elasticsearch
 add	./elasticsearch/run /usr/local/bin/run_elasticsearch
