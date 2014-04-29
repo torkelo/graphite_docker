@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "graphite": "0.0.6"
+    "graphite": "0.0.6",
+    "statsd-client": "0.0.15"
   }
 }

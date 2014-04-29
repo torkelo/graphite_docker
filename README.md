@@ -21,4 +21,4 @@ host ports:
 
 modify start to map to the ports and host directories you need.
 
-Modified from https://github.com/SamSaffron/graphite_docker
+Modified from https://github.com/SamSaffron/graphite_dockertrue
