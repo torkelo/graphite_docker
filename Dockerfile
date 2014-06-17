@@ -65,9 +65,9 @@ run	chmod 0664 /opt/graphite/storage/graphite.db
 run	cd /opt/graphite/webapp/graphite && python manage.py syncdb --noinput
 
 # grafana
-run cd /tmp && wget http://grafanarel.s3.amazonaws.com/grafana-1.5.3.tar.gz &&\
-	tar xzvf grafana-1.5.3.tar.gz && rm grafana-1.5.3.tar.gz &&\
-	mv /tmp/grafana-1.5.3 /src/grafana
+run cd /tmp && wget http://grafanarel.s3.amazonaws.com/grafana-1.6.0.tar.gz &&\
+	tar xzvf grafana-1.6.0.tar.gz && rm grafana-1.6.0.tar.gz &&\
+	mv /tmp/grafana-1.6.0 /src/grafana
 
 add ./grafana/config.js /src/grafana/config.js
 
@@ -99,6 +99,7 @@ expose	7002
 expose	8125/udp
 # Statsd Management port
 expose	8126
+
 
 VOLUME ["/var/lib/elasticsearch"]
 VOLUME ["/opt/graphite/storage/whisper"]
