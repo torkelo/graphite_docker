@@ -41,9 +41,6 @@ run cd /usr/local/src/whisper && git checkout master && python setup.py install
 run cd /usr/local/src/carbon && git checkout 0.9.x && python setup.py install
 run cd /usr/local/src/graphite-web && git checkout 0.9.x && python check-dependencies.py; python setup.py install
 
-#install anthriciate
-run git clone --recursive https://github.com/Dieterbe/anthracite.git /opt/anthracite
-
 # statsd
 add	./statsd/config.js /src/statsd/config.js
 
@@ -53,6 +50,7 @@ add	./graphite/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
 add	./graphite/carbon.conf /opt/graphite/conf/carbon.conf
 add	./graphite/storage-schemas.conf /opt/graphite/conf/storage-schemas.conf
 add	./graphite/storage-aggregation.conf /opt/graphite/conf/storage-aggregation.conf
+add     ./graphite/events_views.py /opt/graphite/webapp/graphite/events/views.py
 
 run	mkdir -p /opt/graphite/storage/whisper
 run	touch /opt/graphite/storage/graphite.db /opt/graphite/storage/index
@@ -84,6 +82,8 @@ add	./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 expose	80
 # grafana
 expose  81
+# elasticsearch
+expose 9200
 
 # Carbon line receiver port
 expose	2003
