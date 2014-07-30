@@ -1,3 +1,10 @@
 #! /bin/bash
 
-docker build -t torkelo/grafana_dev .
+docker build -t gfdev .
+
+cd anthracite
+
+docker build -t anthracite .
+
+cd ..
+

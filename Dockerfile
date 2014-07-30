@@ -30,14 +30,8 @@ run    cd ~ && wget https://download.elasticsearch.org/elasticsearch/elasticsear
 run    cd ~ && dpkg -i elasticsearch-1.0.1.deb && rm elasticsearch-1.0.1.deb
 run    apt-get -y install openjdk-7-jre
 
-
 # Install statsd
 run	mkdir /src && git clone https://github.com/etsy/statsd.git /src/statsd
-
-# Install required packages
-#run	pip install whisper
-#run	pip install --install-option="--prefix=/var/lib/graphite" --install-option="--install-lib=/var/lib/graphite/lib" carbon
-#run	pip install --install-option="--prefix=/var/lib/graphite" --install-option="--install-lib=/var/lib/graphite/webapp" graphite-web
 
 run cd /usr/local/src && git clone https://github.com/graphite-project/graphite-web.git
 run cd /usr/local/src && git clone https://github.com/graphite-project/carbon.git
@@ -56,6 +50,7 @@ add	./graphite/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
 add	./graphite/carbon.conf /opt/graphite/conf/carbon.conf
 add	./graphite/storage-schemas.conf /opt/graphite/conf/storage-schemas.conf
 add	./graphite/storage-aggregation.conf /opt/graphite/conf/storage-aggregation.conf
+add     ./graphite/events_views.py /opt/graphite/webapp/graphite/events/views.py
 
 run	mkdir -p /opt/graphite/storage/whisper
 run	touch /opt/graphite/storage/graphite.db /opt/graphite/storage/index
@@ -65,9 +60,9 @@ run	chmod 0664 /opt/graphite/storage/graphite.db
 run	cd /opt/graphite/webapp/graphite && python manage.py syncdb --noinput
 
 # grafana
-run cd /tmp && wget http://grafanarel.s3.amazonaws.com/grafana-1.5.3.tar.gz &&\
-	tar xzvf grafana-1.5.3.tar.gz && rm grafana-1.5.3.tar.gz &&\
-	mv /tmp/grafana-1.5.3 /src/grafana
+run cd /tmp && wget http://grafanarel.s3.amazonaws.com/grafana-1.6.1.tar.gz &&\
+	tar xzvf grafana-1.6.1.tar.gz && rm grafana-1.6.1.tar.gz &&\
+	mv /tmp/grafana-1.6.1 /src/grafana
 
 add ./grafana/config.js /src/grafana/config.js
 
@@ -87,6 +82,8 @@ add	./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 expose	80
 # grafana
 expose  81
+# elasticsearch
+expose 9200
 
 # Carbon line receiver port
 expose	2003
