@@ -17,4 +17,8 @@ docker run -d \
 
 sleep 10
 # start anthracite
-docker run -d --link gfdev:es -p 8082:8081 --name anthracite anthracite
+docker run -d \
+  --link gfdev:es -p 8082:8081 \
+  -v /etc/timezone:/etc/timezone:ro \
+  -v /etc/localtime:/etc/localtime \
+  --name anthracite anthracite
