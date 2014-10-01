@@ -13,7 +13,7 @@ docker run -d \
   -p 8081:81 \
   -p 8125:8125/udp \
   -p 2003:2003/tcp \
-  --name gfdev gfdev
+  --name gfdev gfdev-image
 
 sleep 10
 # start anthracite
@@ -21,4 +21,4 @@ docker run -d \
   --link gfdev:es -p 8082:8081 \
   -v /etc/timezone:/etc/timezone:ro \
   -v /etc/localtime:/etc/localtime \
-  --name anthracite anthracite
+  --name anthracite anthracite-image

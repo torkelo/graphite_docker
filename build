@@ -1,10 +1,10 @@
 #! /bin/bash
 
-docker build -t gfdev .
+docker build -t gfdev-image .
 
 cd anthracite
 
-docker build -t anthracite .
+docker build -t anthracite-image .
 
 cd ..
 

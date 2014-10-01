@@ -87,8 +87,6 @@ expose 9200
 
 # Carbon line receiver port
 expose	2003
-# Carbon pickle receiver port
-expose	2004
 # Carbon cache query port
 expose	7002
 
