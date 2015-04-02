@@ -66,6 +66,8 @@ run cd /tmp && wget http://grafanarel.s3.amazonaws.com/grafana-1.8.0-rc1.tar.gz 
 
 add ./grafana/config.js /src/grafana/config.js
 
+add ./my_htpasswd /etc/nginx/.htpasswd
+
 # fake data generator
 add ./fake-data-gen /src/fake-data-gen
 run cd /src/fake-data-gen && npm install
