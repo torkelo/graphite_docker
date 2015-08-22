@@ -28,6 +28,7 @@ run  apt-get install libfuse2 &&\
 
 run    cd ~ && wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.1.deb
 run    cd ~ && dpkg -i elasticsearch-1.0.1.deb && rm elasticsearch-1.0.1.deb
+run    apt-get update
 run    apt-get -y install openjdk-7-jre
 
 # Install statsd
@@ -60,9 +61,9 @@ run	chmod 0664 /opt/graphite/storage/graphite.db
 run	cd /opt/graphite/webapp/graphite && python manage.py syncdb --noinput
 
 # grafana
-run cd /tmp && wget http://grafanarel.s3.amazonaws.com/grafana-1.8.1.tar.gz &&\
-	tar xzvf grafana-1.8.1.tar.gz && rm grafana-1.8.1.tar.gz &&\
-	mv /tmp/grafana-1.8.1 /src/grafana
+run cd /tmp && wget http://grafanarel.s3.amazonaws.com/grafana-1.9.1.tar.gz &&\
+	tar xzvf grafana-1.9.1.tar.gz && rm grafana-1.9.1.tar.gz &&\
+	mv /tmp/grafana-1.9.1 /src/grafana
 
 add ./grafana/config.js /src/grafana/config.js
 
