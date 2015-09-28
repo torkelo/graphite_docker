@@ -14,22 +14,6 @@ run     apt-get -y install  python-django-tagging python-simplejson python-memca
 			    python-pysqlite2 python-support python-pip gunicorn     \
 			    supervisor nginx-light nodejs git wget curl
 
-# Elastic Search
-
-# fake fuse
-run  apt-get install libfuse2 &&\
-     cd /tmp ; apt-get download fuse &&\
-     cd /tmp ; dpkg-deb -x fuse_* . &&\
-     cd /tmp ; dpkg-deb -e fuse_* &&\
-     cd /tmp ; rm fuse_*.deb &&\
-     cd /tmp ; echo -en '#!/bin/bash\nexit 0\n' > DEBIAN/postinst &&\
-     cd /tmp ; dpkg-deb -b . /fuse.deb &&\
-     cd /tmp ; dpkg -i /fuse.deb
-
-run    cd ~ && wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.1.deb
-run    cd ~ && dpkg -i elasticsearch-1.0.1.deb && rm elasticsearch-1.0.1.deb
-run    apt-get -y install openjdk-7-jre
-
 # Install statsd
 run	mkdir /src && git clone https://github.com/etsy/statsd.git /src/statsd
 
@@ -72,9 +56,6 @@ add ./my_htpasswd /etc/nginx/.htpasswd
 add ./fake-data-gen /src/fake-data-gen
 run cd /src/fake-data-gen && npm install
 
-# elasticsearch
-add	./elasticsearch/run /usr/local/bin/run_elasticsearch
-
 # Add system service config
 add	./nginx/nginx.conf /etc/nginx/nginx.conf
 add	./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -84,8 +65,6 @@ add	./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 expose	80
 # grafana
 expose  81
-# elasticsearch
-expose 9200
 
 # Carbon line receiver port
 expose	2003
@@ -97,8 +76,6 @@ expose	8125/udp
 # Statsd Management port
 expose	8126
 
-
-VOLUME ["/var/lib/elasticsearch"]
 VOLUME ["/opt/graphite/storage/whisper"]
 VOLUME ["/var/lib/log/supervisor"]
 

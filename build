@@ -2,9 +2,9 @@
 
 docker build -t gfdev-image .
 
-cd anthracite
-
-docker build -t anthracite-image .
-
-cd ..
+# cd anthracite
+#
+# docker build -t anthracite-image .
+#
+# cd ..
 
