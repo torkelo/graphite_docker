@@ -26,11 +26,6 @@ run  apt-get install libfuse2 &&\
      cd /tmp ; dpkg-deb -b . /fuse.deb &&\
      cd /tmp ; dpkg -i /fuse.deb
 
-run    cd ~ && wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.1.deb
-run    cd ~ && dpkg -i elasticsearch-1.0.1.deb && rm elasticsearch-1.0.1.deb
-run    apt-get update
-run    apt-get -y install openjdk-7-jre
-
 # Install statsd
 run	mkdir /src && git clone https://github.com/etsy/statsd.git /src/statsd
 
@@ -39,8 +34,8 @@ run cd /usr/local/src && git clone https://github.com/graphite-project/carbon.gi
 run cd /usr/local/src && git clone https://github.com/graphite-project/whisper.git
 
 run cd /usr/local/src/whisper && git checkout master && python setup.py install
-run cd /usr/local/src/carbon && git checkout 0.9.x && python setup.py install
-run cd /usr/local/src/graphite-web && git checkout 0.9.x && python check-dependencies.py; python setup.py install
+run cd /usr/local/src/carbon && git checkout 0.9.13-pre1 && python setup.py install
+run cd /usr/local/src/graphite-web && git checkout 0.9.13-pre1 && python check-dependencies.py; python setup.py install
 
 # statsd
 add	./statsd/config.js /src/statsd/config.js
@@ -61,18 +56,17 @@ run	chmod 0664 /opt/graphite/storage/graphite.db
 run	cd /opt/graphite/webapp/graphite && python manage.py syncdb --noinput
 
 # grafana
-run cd /tmp && wget http://grafanarel.s3.amazonaws.com/grafana-1.9.1.tar.gz &&\
-	tar xzvf grafana-1.9.1.tar.gz && rm grafana-1.9.1.tar.gz &&\
-	mv /tmp/grafana-1.9.1 /src/grafana
-
-add ./grafana/config.js /src/grafana/config.js
+run echo "deb https://packagecloud.io/grafana/stable/debian/ wheezy main" >> /etc/apt/sources.list
+run apt-get install apt-transport-https
+run curl https://packagecloud.io/gpg.key | sudo apt-key add -
+run apt-get update && apt-get install grafana && apt-get install sqlite3
+# startup the grafana server so that it makes the initial database
+run timeout 1 /usr/sbin/grafana-server -homepath /usr/share/grafana || true
+run sqlite3 /usr/share/grafana/data/grafana.db "insert into data_source (org_id,version,type,name,access,url,basic_auth,is_default,json_data,created,updated,with_credentials) values (1,0,'graphite','graphite','proxy','http://localhost',0,1,'{}',DateTime('now'),DateTime('now'),0)"
 
 # fake data generator
 add ./fake-data-gen /src/fake-data-gen
 run cd /src/fake-data-gen && npm install
-
-# elasticsearch
-add	./elasticsearch/run /usr/local/bin/run_elasticsearch
 
 # Add system service config
 add	./nginx/nginx.conf /etc/nginx/nginx.conf
@@ -83,8 +77,6 @@ add	./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 expose	80
 # grafana
 expose  81
-# elasticsearch
-expose 9200
 
 # Carbon line receiver port
 expose	2003
@@ -96,11 +88,8 @@ expose	8125/udp
 # Statsd Management port
 expose	8126
 
-
-VOLUME ["/var/lib/elasticsearch"]
 VOLUME ["/opt/graphite/storage/whisper"]
 VOLUME ["/var/lib/log/supervisor"]
 
 cmd	["/usr/bin/supervisord"]
-
 # vim:ts=8:noet:
