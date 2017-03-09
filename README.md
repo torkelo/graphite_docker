@@ -13,11 +13,11 @@ host ports:
 - `7002`: the carbon-cache query port (used by the web interface)
 
 
-´´´
-./build
-
+```
+./build 
 ./start
-´´´
+```
+
 
 modify start to map to the ports and host directories you need.
 
